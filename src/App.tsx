@@ -1,9 +1,10 @@
-// import p5 from 'p5';
 import './App.css'
+import Calculation from './screens/Calculation'
 
 function App() {
   return (
     <>
+      <Calculation />
     </>
   )
 }
