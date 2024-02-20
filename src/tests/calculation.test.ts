@@ -1,12 +1,13 @@
 import { describe, expect, test } from '@jest/globals';
 import { Calculation } from "../lib/calculation";
 
-describe.skip('逃げ角', () => {
+describe('逃げ角', () => {
   test('SC1204', () => {
-    const calc = new Calculation("4.76", "12.7", "7", "11", "1");
+    const calc = new Calculation("4.76", "12.7", "7", "11", "1", "90");
     expect((calc.reliefAngle())).toBe("6.303");
     expect((calc.materialHit())).toBe("6.883");
     expect((calc.reliefAngle3())).toBe("6.304");
+    expect((calc.processingAngle())).toStrictEqual(["45.0", "135.0", "225.0", "315.0"]);
   });
   test('SC1204', () => {
     const calc = new Calculation("4.76", "12.7", "0", "11", "1");

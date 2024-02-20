@@ -2,9 +2,10 @@ export class Calculation {
   private THICKNESS: number = 4.76;
   private INSCRIBEDCIRCLE: number = 12.7;
   private RELIEF_ANGLE: number = 7;
-  private RELIEF_ANGLE3: number = 11;
-  private ANGLE3_LENGTH: number = 1;
-  constructor(thickness?: string, inscribedcircle?: string, reliefAngle?: string, reliefAngle3?: string, angleLength?: string) {
+  private RELIEF_ANGLE3: number = 0;
+  private ANGLE3_LENGTH: number = 0;
+  private APEX_ANGLE: number = 0;
+  constructor(thickness?: string, inscribedcircle?: string, reliefAngle?: string, reliefAngle3?: string, angleLength?: string, apexAngle?: string) {
     if (typeof thickness === "string") {
       this.THICKNESS = Number(thickness);
     }
@@ -19,6 +20,9 @@ export class Calculation {
     }
     if (typeof angleLength === "string") {
       this.ANGLE3_LENGTH = Number(angleLength);
+    }
+    if (typeof apexAngle === "string") {
+      this.APEX_ANGLE = Number(apexAngle);
     }
   }
   cos(angle: number): number {
@@ -51,6 +55,17 @@ export class Calculation {
       return ((this.INSCRIBEDCIRCLE / 2 * this.cos(this.RELIEF_ANGLE3)) + (this.THICKNESS * this.sin(this.RELIEF_ANGLE3))).toFixed(3);
     }
   }
-}
 
-new Calculation("4.76", "12.7", "7");
+  processingAngle(): string[] {
+    if (this.APEX_ANGLE) {
+      let processingAngles: string[] = [];
+      processingAngles = [...processingAngles, (this.APEX_ANGLE / 2).toFixed(1)];
+      processingAngles = [...processingAngles, (this.APEX_ANGLE / 2 + (180 - this.APEX_ANGLE)).toFixed(1)];
+      processingAngles = [...processingAngles, (this.APEX_ANGLE / 2 + (180 - this.APEX_ANGLE) + this.APEX_ANGLE).toFixed(1)];
+      processingAngles = [...processingAngles, (this.APEX_ANGLE / 2 + (180 - this.APEX_ANGLE) + this.APEX_ANGLE + (180 - this.APEX_ANGLE)).toFixed(1)];
+      return processingAngles;
+    }
+    return [""];
+  }
+
+}
