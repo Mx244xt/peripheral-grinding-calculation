@@ -1,32 +1,45 @@
 import { useCallback, useState } from 'react';
 import { Calculation } from './calculation';
+type Dimensions = {
+  thickness: string;
+  inscribedcircle: string;
+  reliefAngle: string;
+  reliefAngle3: string;
+  angleLength: string;
+  shape: string;
+}
 
 function useCalc() {
-  const [thickness, setThickness] = useState<string>("4.76");
-  const [inscribedcircle, setInscribedcircle] = useState<string>("12.7");
-  const [reliefAngle, setReliefAngle] = useState<string>("7");
-  const [reliefAngle3, setReliefAngle3] = useState<string>("");
-  const [angleLength, setAngleLength] = useState<string>("");
+  const [dimensions, setDimensions] = useState<Dimensions>({
+    thickness: "4.76",
+    inscribedcircle: "12.7",
+    reliefAngle: "7",
+    reliefAngle3: "",
+    angleLength: "",
+    shape: "",
+  })
   const changThickness = useCallback((e: string) => {
-    setThickness(e);
-  }, []);
+    setDimensions({ ...dimensions, thickness: e });
+  }, [dimensions]);
   const changInscribedcircle = useCallback((e: string) => {
-    setInscribedcircle(e);
-  }, []);
+    setDimensions({ ...dimensions, inscribedcircle: e });
+  }, [dimensions]);
   const changReliefAngle = useCallback((e: string) => {
-    setReliefAngle(e);
-  }, []);
+    setDimensions({ ...dimensions, reliefAngle: e });
+  }, [dimensions]);
   const changReliefAngle3 = useCallback((e: string) => {
-    setReliefAngle3(e);
-  }, []);
+    setDimensions({ ...dimensions, reliefAngle3: e });
+  }, [dimensions]);
   const changAngleLength = useCallback((e: string) => {
-    setAngleLength(e);
-  }, []);
-  console.log(thickness);
-  const calc = new Calculation(thickness, inscribedcircle, reliefAngle, reliefAngle3, angleLength);
-  console.log(calc);
+    setDimensions({ ...dimensions, angleLength: e });
+  }, [dimensions]);
+  const changShapes = useCallback((e: string) => {
+    setDimensions({ ...dimensions, shape: e });
+  }, [dimensions])
 
-  return { state: { thickness, inscribedcircle, reliefAngle, reliefAngle3, angleLength, calc }, setState: { changThickness, changInscribedcircle, changReliefAngle, changReliefAngle3, changAngleLength } };
+  const calc = new Calculation(dimensions.thickness, dimensions.inscribedcircle, dimensions.reliefAngle, dimensions.reliefAngle3, dimensions.angleLength, dimensions.shape);
+
+  return { dimensions, calc, setState: { changThickness, changInscribedcircle, changReliefAngle, changReliefAngle3, changAngleLength, changShapes } };
 }
 
 export default useCalc
