@@ -1,16 +1,32 @@
 export class Calculation {
-  private THICKNESS: number = 4.76;
-  private INSCRIBEDCIRCLE: number = 12.7;
-  private RELIEF_ANGLE: number = 7;
+  private THICKNESS: number = 0;
+  private INSCRIBEDCIRCLE: number = 0;
+  private MATERIAL_INCIRCLE: number = 0;
+  private RELIEF_ANGLE: number = 0;
   private RELIEF_ANGLE3: number = 0;
   private ANGLE3_LENGTH: number = 0;
   private APEX_ANGLE: number = 0;
-  constructor(thickness?: string, inscribedcircle?: string, reliefAngle?: string, reliefAngle3?: string, angleLength?: string, apexAngle?: string) {
+  private CORNER: number = 4;
+  private R_SIZE: number = 0.4;
+  constructor(
+    thickness?: string,
+    inscribedcircle?: string,
+    materialIncirecle?: string,
+    reliefAngle?: string,
+    reliefAngle3?: string,
+    angleLength?: string,
+    apexAngle?: string,
+    rSize?: string,
+    corner?: string,
+  ) {
     if (typeof thickness === "string") {
       this.THICKNESS = Number(thickness);
     }
     if (typeof inscribedcircle === "string") {
       this.INSCRIBEDCIRCLE = Number(inscribedcircle);
+    }
+    if (typeof materialIncirecle === "string") {
+      this.MATERIAL_INCIRCLE = Number(materialIncirecle);
     }
     if (typeof reliefAngle === "string") {
       this.RELIEF_ANGLE = Number(reliefAngle);
@@ -23,6 +39,12 @@ export class Calculation {
     }
     if (typeof apexAngle === "string") {
       this.APEX_ANGLE = Number(apexAngle);
+    }
+    if (typeof corner === "string") {
+      this.CORNER = Number(corner);
+    }
+    if (typeof rSize === "string") {
+      this.R_SIZE = Number(rSize);
     }
   }
   cos(angle: number): number {
@@ -41,18 +63,31 @@ export class Calculation {
     if (this.THICKNESS <= this.ANGLE3_LENGTH) return "ランド幅が厚みよりも大きいです。";
     return (
       (
-        (this.INSCRIBEDCIRCLE / 2)
-        + ((this.ANGLE3_LENGTH * this.tan(this.RELIEF_ANGLE3))
-          - (this.ANGLE3_LENGTH * this.tan(this.RELIEF_ANGLE)))
+        this.INSCRIBEDCIRCLE / 2
+        + this.ANGLE3_LENGTH
+        * (this.tan(this.RELIEF_ANGLE3) - this.tan(this.RELIEF_ANGLE))
       )
       * this.cos(this.RELIEF_ANGLE3)
     ).toFixed(3);
   }
-  materialHit(): string {
+
+  materialNegaHit(): string {
     if (this.RELIEF_ANGLE > 0) {
-      return (Number(this.reliefAngle()) + (this.THICKNESS * this.sin(this.RELIEF_ANGLE))).toFixed(3);
+      return ((this.MATERIAL_INCIRCLE / 2 * this.cos(this.RELIEF_ANGLE)) + (this.THICKNESS * this.sin(this.RELIEF_ANGLE))).toFixed(3);
+    } else if (this.RELIEF_ANGLE3 > 0) {
+      return ((this.MATERIAL_INCIRCLE / 2 * this.cos(this.RELIEF_ANGLE3)) + (this.THICKNESS * this.sin(this.RELIEF_ANGLE3))).toFixed(3);
     } else {
-      return ((this.INSCRIBEDCIRCLE / 2 * this.cos(this.RELIEF_ANGLE3)) + (this.THICKNESS * this.sin(this.RELIEF_ANGLE3))).toFixed(3);
+      return "NaN"
+    }
+  }
+
+  materialPosiHit(): string {
+    if (this.RELIEF_ANGLE > 0) {
+      return ((this.MATERIAL_INCIRCLE / 2 * this.cos(this.RELIEF_ANGLE))).toFixed(3);
+    } else if (this.RELIEF_ANGLE3 > 0) {
+      return ((this.MATERIAL_INCIRCLE / 2 * this.cos(this.RELIEF_ANGLE3))).toFixed(3);
+    } else {
+      return "NaN"
     }
   }
 
@@ -67,5 +102,18 @@ export class Calculation {
     }
     return [""];
   }
+
+  cornerHeight(): string {
+    if (this.CORNER === 4 && this.APEX_ANGLE === 90) {
+      return ((Math.sqrt(2) - 1) * (this.INSCRIBEDCIRCLE / 2 - this.R_SIZE)).toFixed(3);
+    } else if (this.CORNER === 4) {
+      return ((1 / this.sin(this.APEX_ANGLE / 2) - 1) * (this.INSCRIBEDCIRCLE / 2 - this.R_SIZE)).toFixed(3);
+    } else if (this.CORNER === 3) {
+      return (3 / 2 * this.INSCRIBEDCIRCLE - this.R_SIZE).toFixed(3);
+    } else {
+      return "計算できません。";
+    }
+  }
+
 
 }
