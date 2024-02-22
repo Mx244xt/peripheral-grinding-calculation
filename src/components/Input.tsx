@@ -7,9 +7,10 @@ type Props = {
   max?: number;
   min?: number;
   step?: number;
+  optionNum?: string;
 }
 
-function Input({ label, num, setValue, max = 45, min = 0.001, step = 0.001 }: Props) {
+function Input({ label, num, setValue, max = 45, min = 0.001, step = 0.001, optionNum }: Props) {
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const [val, setVal] = useState<string>(num);
   const [stock, setStock] = useState<string>(num);
@@ -24,6 +25,13 @@ function Input({ label, num, setValue, max = 45, min = 0.001, step = 0.001 }: Pr
     isNumBig: false,
     numBigMsg: <p className="text-red-400">入力値が大きい過ぎます。</p>,
   });
+
+  useEffect(() => {
+    if (optionNum) {
+      setStock(optionNum);
+      setVal((+optionNum + +adjustment).toFixed(3))
+    }
+  }, [optionNum])
 
   useEffect(() => {
     validate(+stock + +adjustment);

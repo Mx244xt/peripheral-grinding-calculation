@@ -28,7 +28,7 @@ function Calculation() {
       <Accordion label={"寸法入力"} isAccordion={isAccordion.input} changAccordion={() => inputAccordion()} >
         <Select label={"形状"} items={shapes} setValue={changShapes} defaultValue={shapes["S"].value} />
         <Select label={"内接円"} items={inscribedCircles} setValue={changInscribedcircle} defaultValue={inscribedCircles["9.525"].value} />
-        <Input label={"素材内接円"} num={dimensions.materialIncirecle} setValue={handleChange.changMaterialIncirecle} min={0} max={36} step={0.1} />
+        <Input label={"素材内接円"} num={dimensions.materialIncirecle} optionNum={(+dimensions.inscribedcircle + 0.2).toFixed(3)} setValue={handleChange.changMaterialIncirecle} min={0} max={36} step={0.1} />
         <Select label={"逃げ角"} items={clearanceAngles} setValue={changReliefAngle} defaultValue={clearanceAngles["C"].value} />
         <Select label={"Rサイズ"} items={cornerR} setValue={changR} defaultValue={cornerR["04"].value} />
         <Select label={"厚み"} items={thicknesses} setValue={changThickness} defaultValue={thicknesses["03"].value} />
