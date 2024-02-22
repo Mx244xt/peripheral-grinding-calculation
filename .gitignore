@@ -25,4 +25,4 @@ dist-ssr
 
 # dev
 design
-src/tests
+*/tests
