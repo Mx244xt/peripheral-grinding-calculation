@@ -1,14 +1,20 @@
 import { useState } from "react";
-import Input from "../components/Input";
-import Text from "../components/Text";
-import useCalc from "../lib/useCalc";
 import Accordion from "../components/Accordion";
+import Input from "../components/Input";
+import Select from "../components/Select";
+import Text from "../components/Text";
+import useCalc from "../hooks/useCalc";
+import { clearanceAngles, cornerR, inscribedCircles, shapes, thicknesses } from "../lib/selectItems";
 
 function Calculation() {
+
   const {
-    state: { thickness, inscribedcircle, reliefAngle, reliefAngle3, angleLength, calc },
-    setState: { changThickness, changInscribedcircle, changReliefAngle, changReliefAngle3, changAngleLength }
+    dimensions,
+    calc,
+    handleChange,
   } = useCalc();
+  const { changThickness, changInscribedcircle, changReliefAngle, changReliefAngle3, changAngleLength, changShapes, changR } = handleChange;
+
   const [isAccordion, setAccordion] = useState({ input: false, output: false });
   function inputAccordion() {
     setAccordion({ ...isAccordion, input: !isAccordion.input });
@@ -20,16 +26,21 @@ function Calculation() {
   return (
     <>
       <Accordion label={"寸法入力"} isAccordion={isAccordion.input} changAccordion={() => inputAccordion()} >
-        <Input label={"厚み"} num={thickness} setNum={changThickness} min={1} max={20} step={0.01} />
-        <Input label={"内接円"} num={inscribedcircle} setNum={changInscribedcircle} />
-        <Input label={"逃げ角"} num={reliefAngle} setNum={changReliefAngle} min={0} max={36} step={0.1} />
-        <Input label={"3番角"} num={reliefAngle3} setNum={changReliefAngle3} min={0} max={36} step={0.1} />
-        {reliefAngle3 && <Input label={"ランド幅"} num={angleLength} setNum={changAngleLength} />}
+        <Select label={"形状"} items={shapes} setValue={changShapes} defaultValue={shapes["S"].value} />
+        <Select label={"内接円"} items={inscribedCircles} setValue={changInscribedcircle} defaultValue={inscribedCircles["9.525"].value} />
+        <Input label={"素材内接円"} num={dimensions.materialIncirecle} setValue={handleChange.changMaterialIncirecle} min={0} max={36} step={0.1} />
+        <Select label={"逃げ角"} items={clearanceAngles} setValue={changReliefAngle} defaultValue={clearanceAngles["C"].value} />
+        <Select label={"Rサイズ"} items={cornerR} setValue={changR} defaultValue={cornerR["04"].value} />
+        <Select label={"厚み"} items={thicknesses} setValue={changThickness} defaultValue={thicknesses["03"].value} />
+        <Select label={"3番角"} items={clearanceAngles} setValue={changReliefAngle3} defaultValue={clearanceAngles["N"].value} />
+        {+dimensions.reliefAngle3 > 0 && <Input label={"ランド幅"} num={dimensions.angleLength} setValue={changAngleLength} min={0} max={36} step={0.01} />}
       </Accordion>
       <Accordion label={"計算結果"} isAccordion={isAccordion.output} changAccordion={() => outputAccordion()} >
         <Text label={"2番角仕上げ寸法"} anser={calc.reliefAngle()} description="内接円 ÷ 2 × cos(逃げ角)" />
-        <Text label={"ネガ当たり"} anser={calc.materialHit()} description="2番角仕上げ寸法 + (厚み × sin(逃げ角))" />
-        {reliefAngle3 && angleLength && thickness && <Text label={"3番角仕上げ代"} anser={calc.reliefAngle3()} description="内接円 ÷ 2 + ((ランド幅 × tan(3番角)) - (ランド幅 × tan(逃げ角))) × cos(3番角)" />}
+        <Text label={"ネガ当たり"} anser={calc.materialNegaHit()} description="(素材内接円 ÷ 2 × cos(逃げ角)) + (厚み × sin(逃げ角))" />
+        <Text label={"ポジ当たり"} anser={calc.materialPosiHit()} description="(素材内接円 ÷ 2 × cos(逃げ角))" />
+        <Text label={"コーナー高さ"} anser={calc.cornerHeight()} description={dimensions.shape === shapes["S"].value ? "(√2 -1) * (内接円 ÷ 2 - Rサイズ) " : dimensions.shape === shapes["T"].value ? "3 ÷ 2 × 内接円 - Rサイズ" : dimensions.shape === shapes["other"].value ? "" : "(1 ÷ sin(頂角 ÷ 2) - 1) × (内接円 ÷ 2 - Rサイズ)"} />
+        {dimensions.reliefAngle3 !== "0" && dimensions.angleLength && dimensions.thickness && <Text label={"3番角仕上げ代"} anser={calc.reliefAngle3()} description="(内接円 ÷ 2 + (ランド幅 × (tan(3番角) - tan(逃げ角))) × cos(3番角)" />}
       </Accordion>
     </>
   )
