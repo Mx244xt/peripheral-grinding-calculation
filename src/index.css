@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+
+body{
+  width: 100vw;
+  height: 100vh;
+}
+
+#root{
+  width: 100vw;
+  height: 100vh;
+}
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -12,5 +22,19 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   margin: 0 auto;
-  padding: 1rem;
+  padding: 0;
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+}
+@media (prefers-color-scheme: light) {
+  :root{
+    background-color: #F5F5F5;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root{
+  background-color: #121212;
+  }
 }

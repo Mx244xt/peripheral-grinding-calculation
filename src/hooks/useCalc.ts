@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { Calculation } from '../lib/calculation';
-type Dimensions = {
+export type Dimensions = {
   thickness: string;
   inscribedcircle: string;
   materialIncirecle: string;
@@ -8,10 +8,18 @@ type Dimensions = {
   reliefAngle3: string;
   angleLength: string;
   shape: string;
-  cornerR: string;
+  rSize: string;
 }
 
+export type Item = {
+  value: number;
+  value2: number;
+  corner: number;
+  firstSurface: number;
+};
+
 function useCalc() {
+  const [apexAngle, setApexAngle] = useState<Item>({ value: 90, value2: 90, corner: 4, firstSurface: 45 });
   const [dimensions, setDimensions] = useState<Dimensions>({
     thickness: "3.18",
     inscribedcircle: "9.525",
@@ -20,7 +28,7 @@ function useCalc() {
     reliefAngle3: "0",
     angleLength: "1",
     shape: "90",
-    cornerR: "0.4",
+    rSize: "0.4",
   })
 
   const changThickness = useCallback((e: string) => {
@@ -45,8 +53,17 @@ function useCalc() {
     setDimensions({ ...dimensions, shape: e });
   }, [dimensions])
   const changR = useCallback((e: string) => {
-    setDimensions({ ...dimensions, cornerR: e });
+    setDimensions({ ...dimensions, rSize: e });
   }, [dimensions])
+  const changApexAngle = useCallback((e: string) => {
+    let _val: Item = JSON.parse(e);
+    _val = { ..._val, value: +_val.value }
+    _val = { ..._val, value2: +_val.value2! }
+    _val = { ..._val, corner: +_val.corner! }
+    _val = { ..._val, firstSurface: +_val.firstSurface! }
+    setApexAngle(_val);
+  }, [apexAngle])
+
 
   const handleChange = {
     changThickness,
@@ -57,9 +74,20 @@ function useCalc() {
     changAngleLength,
     changShapes,
     changR,
+    changApexAngle,
   }
 
-  const calc = new Calculation(dimensions.thickness, dimensions.inscribedcircle, dimensions.materialIncirecle, dimensions.reliefAngle, dimensions.reliefAngle3, dimensions.angleLength, dimensions.shape, dimensions.cornerR);
+  const calc = new Calculation(
+    dimensions.thickness,
+    dimensions.inscribedcircle,
+    dimensions.materialIncirecle,
+    dimensions.reliefAngle,
+    dimensions.reliefAngle3,
+    dimensions.angleLength,
+    dimensions.shape,
+    dimensions.rSize,
+    apexAngle,
+  );
 
   return { dimensions, handleChange, calc };
 }
