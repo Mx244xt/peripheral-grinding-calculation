@@ -5,6 +5,7 @@ type Props = {
   items: Items;
   setValue: (e: string) => void;
   defaultValue?: string;
+  optionSetValue?: (e: string) => void
 }
 
 type Items = {
@@ -12,28 +13,33 @@ type Items = {
     value: string;
     value2?: string;
     corner?: string;
+    firstSurface?: string;
   }
 };
 
 
-function Select({ label, items, setValue, defaultValue }: Props) {
+function Select({ label, items, setValue, defaultValue, optionSetValue }: Props) {
   const [isChecked, setIsChecked] = useState<boolean>(false);
-  const [stock, setStock] = useState<string>(defaultValue!);
+  const [stock, setStock] = useState<string>("");
   const [adjustment, setAdjustment] = useState<string>("0");
-
 
   const SelectItems = Object.keys(items).map((item) => {
     return (
-      <option value={items[item].value} key={item}>
+      <option value={item} key={item}>
         {items[item].value !== item && item + " : "}{items[item].value}
       </option>
     )
   })
 
   function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
-    setValue(e.target.value);
-    setStock(e.target.value);
+    const item = items[e.target.value];
+    if (typeof item.value2 === "string" && typeof item.corner === "string" && optionSetValue) {
+      optionSetValue(JSON.stringify(item));
+    }
+    setValue(item.value);
+    setStock(item.value);
   }
+
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     setAdjustment(e.target.value);
     setValue((+stock + +e.target.value).toFixed(3));
